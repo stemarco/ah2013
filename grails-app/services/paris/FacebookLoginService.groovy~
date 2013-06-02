@@ -1,0 +1,8 @@
+package paris
+
+class FacebookLoginService {
+
+    def serviceMethod() {
+
+    }
+}

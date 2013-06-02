@@ -1,0 +1,395 @@
+/* bg-tile.png copyright Addy Osmani, 2010. */
+
+
+
+body {
+    margin:0 auto; 
+    background-image:url('../../images/paris_2.jpg');
+    background-size: 100%;
+    font-family: sans-serif;
+    color: #eee;
+}
+
+.mask {
+  z-index: 90;
+}
+
+.container { width:800px; margin:0 auto; }
+
+.rota {
+font-family: 'Quando', serif;
+}
+
+ 
+.header {
+  height: 32px;
+  background-color: #333333;
+ }
+
+.footer {
+  height: 32px;
+}
+
+.detailLink {
+  color: #069;
+}
+
+.detailLink:hover {
+  color: #069;
+ cursor: hand; cursor: pointer;
+}
+
+
+.title {
+    float: left;
+    font-size: 18px;
+    font-family: sans-serif;
+
+    padding-left: 24px;
+    margin-top: 5px;
+    color: #0CAF3A;
+}
+
+.title .rota {
+  text-align: center;
+}
+
+
+
+.fblogin {
+    float: right;
+    padding-right:24px;
+    padding-top: 5px;
+}
+
+.fbuser {
+    float: left;
+    color: #D8DFEA;
+    display: inline-block;
+    max-width: 175px;
+    overflow: hidden;
+    padding-right: 8px;
+    text-overflow: ellipsis;
+    vertical-align: top;
+    white-space: nowrap;
+}
+
+.box {
+border-radius: 100%;
+-moz-border-radius: 100%;
+ -o-border-radius: 100%;
+    -moz-border-radius:300px;
+    -webkit-border-radius:300px;
+    background-position:0px 0px;
+    -moz-box-shadow:1px 1px 1px #0F0F0F;
+    -webkit-box-shadow:1px 1px 1px #0F0F0F;
+    position:absolute;
+    background-repeat:no-repeat;
+    border:4px solid #73B3D8;
+    float:left;
+    height:120px;
+    margin:18px;
+    position:absolute;
+    width:120px;
+    padding:5px;
+    background-position:-50px 0px;
+    background-size: 200px 200px
+}
+
+.clicked {
+    border:4px solid #2EB90B;
+}
+
+.box:hover{
+    border:4px solid #fa1a1a; 
+}
+
+
+
+.clicked:hover{
+    border:10px solid #2EB90B;
+}
+
+
+/**
+ * removed width: 160px; & margin-top: 110px
+ margin-left: -20px;
+ margin: 0 auto;
+ 
+*/
+.box .caption {
+order-radius: 100%;
+-moz-border-radius: 100%;
+ -o-border-radius: 100%;
+
+    -moz-border-radius:300px;
+    -webkit-border-radius:300px;
+    background-color: rgba(64, 64, 64, 0.80);
+    color: #D5DDC9;
+    font-family: sans-serif;
+    text-align: center; 
+}
+
+
+#about {
+    display: none;
+    -moz-border-radius:10px;
+    -webkit-border-radius:10px;
+    background-color: #6E6E6E;
+    width: 600px;
+    height: 380px;
+    margin:0 auto;
+    font-size: 28px;
+    position: absolute;
+    z-index: 100;
+    margin:-260px 0 0 -320px;
+    left:50%;
+    top:50%;
+    background-color:rgba(52, 52, 52, 0.90);
+    
+    -moz-box-shadow: 0 0 10px #DDD;
+    -webkit-box-shadow: 0 0 10px #CCC;
+    box-shadow: 0 0 10px #CCC;
+    
+}
+
+#about .modal {
+    margin: 20px;
+}
+
+#about .play {
+    width: 200px;
+    height: 64px;
+    margin: 0 auto;
+    border: 1px #333333 solid;
+    background-color: #333;
+    font-size: 48px;
+    text-align: center;
+    text-shadow: 1px 1px 1px #000, 3px 3px 5px #202020; 
+    text-shadow: 0px 2px 3px #202020; 
+    z-index: 110;
+
+    /* IE10 Consumer Preview */ 
+    background-image: -ms-linear-gradient(top, #FFFFFF 0%, #333333 100%);
+    
+    /* Mozilla Firefox */ 
+    background-image: -moz-linear-gradient(top, #FFFFFF 0%, #333333 100%);
+    
+    /* Opera */ 
+    background-image: -o-linear-gradient(top, #FFFFFF 0%, #333333 100%);
+    
+    /* Webkit (Safari/Chrome 10) */ 
+    background-image: -webkit-gradient(linear, left top, left bottom, color-stop(0, #FFFFFF), color-stop(1, #333333));
+    
+    /* Webkit (Chrome 11+) */ 
+    background-image: -webkit-linear-gradient(top, #FFFFFF 0%, #333333 100%);
+    
+    /* W3C Markup, IE10 Release Preview */ 
+    background-image: linear-gradient(to bottom, #FFFFFF 0%, #333333 100%);
+    
+}
+
+
+#about .play:hover {
+    /* IE10 Consumer Preview */ 
+    background-image: -ms-linear-gradient(top, #FFFFFF 0%, #222222 100%);
+    
+    /* Mozilla Firefox */ 
+    background-image: -moz-linear-gradient(top, #FFFFFF 0%, #222222 100%);
+    
+    /* Opera */ 
+    background-image: -o-linear-gradient(top, #FFFFFF 0%, #222222 100%);
+    
+    /* Webkit (Safari/Chrome 10) */ 
+    background-image: -webkit-gradient(linear, left top, left bottom, color-stop(0, #FFFFFF), color-stop(1, #222222));
+    
+    /* Webkit (Chrome 11+) */ 
+    background-image: -webkit-linear-gradient(top, #FFFFFF 0%, #222222 100%);
+    
+    /* W3C Markup, IE10 Release Preview */ 
+    background-image: linear-gradient(to bottom, #FFFFFF 0%, #222222 100%);
+    
+}
+
+.shuffle {
+    -moz-border-radius:300px;
+    -webkit-border-radius:300px;
+    background-position:0px 0px;
+    -moz-box-shadow:1px 1px 1px #0F0F0F;
+    -webkit-box-shadow:1px 1px 1px #0F0F0F;
+    position:absolute;
+    background-repeat:no-repeat;
+    padding:5px;
+    background-position:20px 20px;
+    
+    background-image:url('../../images/shuffle.png');
+    width: 96px;
+    height: 96px;
+    background-size: 64px 64px;
+    background-repeat:no-repeat;
+    margin:0 auto;
+    margin-top: 240px;
+    margin-left: 335px;
+    position:absolute;
+}
+
+.shuffle:hover {
+    -moz-box-shadow:2px 2px 2px #0F0F0F;
+    -webkit-box-shadow:2px 2px 2px #0F0F0F;
+}
+
+
+.power {
+    position:absolute;
+    bottom: 10px;
+    padding: 10px;
+}
+
+
+
+.upcoming {
+    display: none;
+
+    width: 280px;
+    height: 500px; !important;
+    float:right;
+    border-left: 1px black solid;
+    border-bottom: 1px black solid;
+}
+
+.poi {
+    padding-left: 12px;
+    background-color: #666;
+    font-size: 18px;
+    overflow: ellipses;
+    border-bottom: 1px black solid;
+}
+
+.events-scroller {
+    overflow-y: auto;
+}
+.events  {
+    list-style-type: none;
+    margin-left: 6px;
+    padding-left: 1em;
+    text-indent: -1em;
+    font-size: 12px;
+    color: #222;
+}
+
+.venue {
+    float: right;
+    padding-right: 4px;
+    font-weight: bold;
+    max-width: 175px;
+    overflow-y: ellipses;
+}
+
+.data { 
+    float: left;
+}
+
+
+.event-name {
+    padding-left: 8px;
+    padding-right: 4px;
+    overflow: ellipses;
+}
+
+li {
+    padding-bottom: 4px;
+}
+
+
+
+// http://rndnext.blogspot.com/2009/02/jquery-ajax-tooltip.html
+// needs modification
+#poidPopupContainer {
+    position:absolute;
+    left:0;
+    top:0;
+    display:none;
+    z-index: 20000;
+}
+
+.poiPopupPopup {
+}
+
+#poiPopupContent {
+    background-color: #FFF;
+    font-size: 9pt;
+    color: #222;
+    min-width: 175px;
+    min-height: 50px;
+height: 220px;
+
+}
+
+#poiPopupAbout {
+height: 200px;
+width: 360px;
+overflow-y: auto;
+padding: 4px;
+border: 1px #888 solid;
+}
+
+
+#poiPopupMap {
+height: 200px;
+width: 360px;
+padding: 4px;
+border: 1px #888 solid;
+  display: none;
+}
+
+#poiPopupNearby {
+height: 200px;
+width: 360px;
+padding: 4px;
+border: 1px #888 solid;
+  display: none;
+}
+
+
+.poiPopupPopup .poiPopupImage {
+    margin: 5px;
+    margin-right: 15px;
+}
+
+.poiPopupPopup .corner {
+    width: 19px;
+    height: 15px;
+}
+    
+.poiPopupPopup .topLeft {
+    background: url(../../images/popup/balloon_topLeft.png) no-repeat;
+}
+    
+.poiPopupPopup .bottomLeft {
+    background: url(../../images/popup/balloon_bottomLeft.png) no-repeat;
+}
+    
+.poiPopupPopup .left {
+    background: url(../../images/popup/balloon_left.png) repeat-y;
+}
+    
+.poiPopupPopup .right {
+    background: url(../../images/popup/balloon_right.png) repeat-y;
+}
+    
+.poiPopupPopup .topRight {
+    background: url(../../images/popup/balloon_topRight.png) no-repeat;
+}
+    
+.poiPopupPopup .bottomRight {
+    background: url(../../images/popup/balloon_bottomRight.png) no-repeat;
+}
+    
+.poiPopupPopup .top {
+    background: url(../../images/popup/balloon_top.png) repeat-x;
+}
+    
+.poiPopupPopup .bottom {
+    background: url(../../images/popup/balloon_bottom.png) repeat-x;
+    text-align: center;
+} 

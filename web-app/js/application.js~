@@ -1,0 +1,510 @@
+// This is a manifest file that'll be compiled into application.js, which will include all the files
+// listed below.
+//
+// Any JavaScript/Coffee file within this directory, lib/assets/javascripts, vendor/assets/javascripts,
+// or vendor/assets/javascripts of plugins, if any, can be referenced here using a relative path.
+//
+// It's not advisable to add code directly here, but if you do, it'll appear at the bottom of the
+// the compiled file.
+//
+// WARNING: THE FIRST BLANK LINE MARKS THE END OF WHAT'S TO BE PROCESSED, ANY BLANK LINE SHOULD
+// GO AFTER THE REQUIRES BELOW.
+//
+//= require jquery
+//= require jquery_ujs
+//= require_tree .
+
+jQuery.ajaxSetup({
+  'beforeSend': function(xhr) {xhr.setRequestHeader("Accept", "text/javascript, application/json")}
+    });
+
+// There is probably an efficient javascript LRU cache out there
+var artistCache = {};
+
+$(document).ready(function(){
+	var service = "music"; // deals, local, ...
+	var geoposition = null;
+	var rounds = [];
+	var clicked = {};
+	var user = {};
+	
+
+var hideDelay = 500;  
+  var currentID;
+  var hideTimer = null;
+
+
+	var onShuffle = function(event) { fetchFacebookGraph(); }
+	// { apiFn("start", null,  {success:onReceiveBatch}); };
+
+	var onPlay = function(event) { $("#about").css({visibility:"hidden"}); };
+	
+	var onChoose = function(event) { 
+	    var id = event.currentTarget.id; 
+	    var div =  $("#" + id);
+	    if (id in clicked) {
+		delete clicked[id];
+		div.removeClass("clicked");
+	    } else {
+		clicked[id] = artistCache[id];
+		$("#" + id).addClass("clicked");
+	    }
+	};
+
+	var onEventClick = function(event) {
+	    console.log("event click"); console.log(event);
+	    var id = event.currentTarget.id; 
+	    var artistId = event.currentTarget.getAttribute("artist");
+	    var artist = artistCache[artistId];
+
+	    withFacebookPage(artist, function(page) {
+		    console.log(page);
+
+		    var dialog = $("<div/>", { class: "event-dialog", 
+					       //'background-size': '100%',
+					       'background-size': 'cover',
+					       //'background-size': 'contain',
+					       title: artist.name});
+		    dialog.dialog();
+		    dialog[0].parentNode.css({height: '308px',
+				width: '718px',
+				'background-image': 'url(' +page.cover.source + ')'});
+		});
+	};
+
+	var onReceiveBatch = function(jsonArtists) {
+
+	    $.each(jsonArtists, function(i, item) {
+		    id = item.id;
+		    artistCache[id] = item;
+		});
+	    fillDetails(jsonArtists);
+	};
+	
+	var onBatchRequestError = function(response, status, error) {
+	    // reloading after authentication is not an error, but does not
+	    // have a status
+	    console.log("status: " + status);
+	    console.log(response, status, error);
+	};
+	
+
+	/**
+	 * The workhorse. All calls to the rota server pass through this method
+	 */
+	function apiFn(action, data, callbacks) {
+	    var defaultCallbacks = { 
+		error: function() { console.log("error requesting: " + action); },
+		success: function(r) { console.log(r); }
+	    };
+
+	    var template = {
+		    url:  "http://mitercam.mit.edu:38080/stubhack/api/" + action,
+			type: "POST",
+			dataType: "json",
+			data: {service: service, data:JSON.stringify(data)}
+		};
+	    $.ajax($.extend(template, $.extend(defaultCallbacks, callbacks)));
+	}
+
+	
+	function fillDetails(items) {
+	    
+	    $(".box").each(function(i) {
+		    var details = items[i];
+		    $(this).empty()
+			$('<div/>', {
+				class: 'caption',
+				    text: details.name
+				    }).appendTo($(this));
+		    $(this).attr({'id': details.id});
+		    
+		    $(this).removeClass("clicked");
+		    if (details.id in clicked) {
+			$(this).addClass("clicked");
+		    } 
+		    if (details.images[0]) {
+			var images = details.images;
+			var image = randomImage(images);
+			if (image) {
+			    var img = "url(" + image + ")"; 
+			    $(this).css({'background-image': img});
+			} else {
+			    console.log("no image for " + details.name );
+			}
+		    }
+		});
+	}
+	
+	/**
+	 * assuming no more than a couple images are bad,
+	 * otherwise will need to go with scheme of trying 
+	 * to find reliable provider first
+	 */
+	function randomImage(images) {
+	    var avail = $.grep(images, function(item, i) { return (item.error == undefined); });
+	    if (avail.length == 0) {
+		return null;
+	    }
+	    var idx = Math.floor(Math.random()*avail.length);
+	    var image = avail[idx];
+	    if (! _checkImage(image.url)) {
+		image.error = 404;
+	    }
+	    return ( ! image.error) ? image.url : randomImage(images);
+	}
+	
+	function _checkImage(src) {
+	    return true;   // cross domain ajax issues!
+
+	    var check = true;
+	    $.ajax({
+		    url: src,
+			type: 'GET',
+			error: function(r, a, b){ console.log(b); check = (a == 'error'); }
+		});
+	}
+	
+	function withForeignId(catalog, foreign_ids, fn) {
+	    $.each($.grep(foreign_ids, function(item, i){
+			return item.catalog == catalog;
+		    }), function(i, item) { 
+		var foreign_id = item.foreign_id.split(":")[2];
+		fn(foreign_id);
+		});
+	}
+	
+	function withFacebookPage(artist, fn) {
+	    var getPage = function(fbid) {
+		FB.api('/' + fbid, function(response) {	fn(response); });
+	    }
+	    withForeignId("facebook", artist.foreign_ids, getPage);
+	}
+
+
+	function updateEvents(artist, id) {
+	    clearArtistEvents();
+	    showArtistEvents(artist, id);
+	}
+	
+	function clearArtistEvents() {
+	    $('.artist').empty();
+	    $('.events').empty();
+	}
+	
+	
+	function showArtistEvents(artist, id) {
+	    $('.upcoming').hide();
+	    var byDate = function(a, b) { 
+		var bc = b.start_time.replace(/-/g, "").split("T")[0];
+		var ac = a.start_time.replace(/-/g, "").split("T")[0];
+		return ac - bc;
+	    };
+	    
+	    FB.api('/' + id + '/events', function(r) { 
+		    if (r.data && r.data.length > 0) {
+			$('.artist').html(artist.name);
+			$.each(r.data.sort(byDate), function(i, item) {
+				console.log(item);
+				var list = $('<li/>', {
+					id: "fb:" + item.id,
+					artist: artist.id,
+					class: 'event',
+				    }).appendTo($('.events'));
+				list.click(onEventClick);
+				
+				var eventName = $('<div/>', { 
+					class: 'event-name', 
+					html: item.name.replace('SOLD OUT', '<b>SOLD OUT</b>') });
+				
+				var whereWhen = $('<div/>');
+				$.each([
+					$('<div/>', { html: item.location, class: 'venue' }),
+					$('<div/>', { html: item.start_time.split("T")[0], class: 'date' }),
+					], function(i, item) { item.appendTo(whereWhen) });
+				
+				$.each([ whereWhen, eventName ], 
+				       function(i, item) { item.appendTo(list) });
+				
+			    });
+			$('.upcoming').show();
+		    }
+	    });
+	}
+	
+	$(document).on("contextmenu", ".box", function(event){
+		var id = event.currentTarget.id; 
+		var item = artistCache[id];
+		var foreign_ids = item.foreign_ids;
+		
+		withForeignId("facebook", foreign_ids, function(id) {
+			updateEvents(item, id);
+		});
+		
+		return false;
+	    });
+
+	function initGame() {
+	    apiFn("start",  null, {success:onReceiveBatch});
+	}
+
+	function initGeoLocation() {
+	    var onSuccess = function(r) { geoposition = r; }
+	    var onError = function(r) { console.log(r); }
+
+	    if(navigator.geolocation)
+		navigator.geolocation.getCurrentPosition(onSuccess, onError);
+	}
+	
+	function createAsyncInitFn(apikey) {
+	    return function() {
+		// init the FB JS SDK
+		FB.init({
+			appId      : apikey,                     // App ID from the app dashboard
+			    channelUrl : '//mitercam.mit.edu:38080/stubhack/channel.html', // Channel file for x-domain comms
+			    status     : true,                                  // Check Facebook Login status
+			    xfbml      : true,                                  // Look for social plugins on the page
+			    cookie     : true,                                  // enable cookies to allow server to access session
+			    oauth      : true                                   // enable OAuth 2.0
+			    });
+		
+		// Additional initialization code such as adding Event Listeners goes here
+		// Apparently, events are being triggered periodically -- I am seeing 
+		// 
+		FB.Event.subscribe('auth.authResponseChange', function(response) {
+			switch (response.status) {
+			case "connected":
+			    console.log("connected and " + isFacebookConnected())
+			    //if (! isFacebookConnected) {
+				onFacebookConnect();
+				//}
+			    break;
+			case "not_authorized":
+			    onFacebookDisconnect();
+			    console.log('not_authorized');
+			    break;
+			default:
+			    onFacebookDisconnect();
+			    console.log('response.status: ' + response.status);
+			}
+		    });
+	    };
+	}
+
+
+	function initFb(apikey, d) {
+	    window.fbAsyncInit = createAsyncInitFn(apikey);
+	    var js, id = 'facebook-jssdk', ref = d.getElementsByTagName('script')[0];
+	    if (d.getElementById(id)) {return;}
+	    js = d.createElement('script'); js.id = id; js.async = true;
+	    js.src = "http://connect.facebook.net/en_US/all.js";
+	    ref.parentNode.insertBefore(js, ref);
+	}
+
+	function isFacebookConnected() {
+	    return (user.fb != {})
+	}
+
+	/**
+	 * Get the relevant user info -- would like to make a single call to get all the aspects.
+	 * There may be overlap of music and likes as music is a subset of the user's likes, but
+	 * there is a page limit and both seem to be in reverse chronological order by selection time
+	 * so the likes set may not contain music likes
+	 */
+	function onFacebookConnect() {
+	    fetchFacebookGraph();
+	}
+
+	function fetchFacebookGraph() {
+	    user.fb = {}
+	    user.rota = {}
+	    FB.api('/me', function(response) { user.info = response; $(".fbuser").text(response.name); });
+	    FB.api('/me/music', function(response) { 
+		    user.fb.music = response; 
+		    var pages = [];
+		    $.each(response.data, function(idx, it) { 
+			    var obj = $.extend({}, it);
+			    delete obj.category;
+			    pages.push(obj);});
+			
+		    apiFn('fbgraph', 
+			  { 
+			      pages: pages, 
+				  clientLocation: geoposition
+				  },
+			  { success: function(r) { 
+				  console.log(r);
+				  var similar = r.music.similar;
+				  var flatArtists = [];
+				  flatArtists = flatArtists.concat(r.music.likes);
+				  
+				  for (a in similar) {
+				      flatArtists = flatArtists.concat(similar[a]);
+				  }
+				  console.log(flatArtists); 
+				  fillDetails(shuffle(flatArtists));
+
+				  
+				  user.rota.recommended = r;
+			      }});  // don't return paging 
+		});
+	    FB.api('/me/likes', function(response) { 
+		    user.fb.likes = response; 
+		});
+
+	}
+
+	function onFacebookDisconnect() {
+	    user.fb = {}
+	    $(".fbuser").text("");
+	}
+
+
+//shuffles list in-place
+function shuffle(list) {
+  var i, j, t;
+  for (i = 1; i < list.length; i++) {
+    j = Math.floor(Math.random()*(1+i));  // choose j in [0..i]
+    if (j != i) {
+      t = list[i];                        // swap list[i] and list[j]
+      list[i] = list[j];
+      list[j] = t;
+    }
+  }
+  return list;
+}
+
+
+	/*
+	 * createITunesWidget([637489638,207399824])
+	 */
+	function createITunesWidget(songs) {
+	    var bgcolor="ffffff";
+	    $('<iframe/>', {
+		    src:"http://widgets.itunes.apple.com/widget.html?c=us" + 
+			"&brc="+ bgcolor + "&blc=" + bgcolor + "&trc=" + bgcolor + "&tlc=" + bgcolor + 
+			"&d=Songs%20from%20your%20chair&t=Rota%20Music%20Mixer&m=song&e=song" + 
+			"&w=250&h=300&wt=playlist&partnerId=&affiliate_id=&ids=" + $.join(songs),
+			frameborder: 0,
+			style:"overflow-x:hidden;overflow-y:hidden;width:250px;height: 300px;border:0px"
+			});
+	}
+
+
+	$(".box").each(function() { $(this).click(onChoose); });
+	$(".shuffle").click(onShuffle);
+	$(".play").click(onPlay);
+	$('#artistPopupContainer').css({display:'none', position:'absolute'})
+
+
+$('.box').on('mouseover', function(event) {
+      // format of 'rel' tag: pageid,personguid
+      var enid = event.currentTarget.id
+
+      if (hideTimer) clearTimeout(hideTimer);
+
+      //      var boundsLeft = event.currentTarget.getBoundingClientRect().
+      var pos = $(this).offset();
+      var width = $(this).width();
+      
+      var left = ((pos.left + width + 360) <  window.innerWidth) ?
+	  pos.left + 140 :
+	  pos.left - 410;
+
+      $('#artistPopupContainer').css({
+          left: left + 'px',
+          top: pos.top - 5 + 'px'
+      });
+      
+
+      $('#artistPopupAbout').html('&nbsp;');
+      $('#artistLinks').empty();
+
+      var facebookAbout = function(id) {
+	  FB.api("/" + id, function (r) { 
+		  console.log(r); 
+		  var about = r.bio ? r.bio : r.description ? r.description :  r.about ? r.about : "Facebook bio unavailable" ;
+		  about = about.replace(/[\n]+/g, '<br/>');
+		  artistCache[enid].about = about;
+		  $('#artistPopupAbout').html(about);
+		  $('#artistPopupContainer').css('display', 'block');
+	      });
+      };
+	      
+      var updateArtistAbout = function(data) {
+	  console.log(data);
+	  // Verify that we're pointed to a page that returned the expected results.
+	  artistCache[enid] = data;
+	  withForeignId("facebook", data.foreign_ids, facebookAbout);
+	  withForeignId("facebook", data.foreign_ids, function(id) {
+	      if (! id) return;
+	      $('<a/>', { text: 'facebook', target:'_facebook', href: 'https://www.facebook.com/' + id }).appendTo($('#artistLinks'));
+	  });
+
+
+      };
+
+      var artistFetchError = function(response) { 
+		     console.log(response)
+			 $('#artistPopupAbout').html('error: ' + response);
+      };
+
+      if (! artistCache[enid]) {
+         apiFn('artist', {id: enid}, 
+	       { error: artistFetchError, success: updateArtistAbout }
+	       );
+      } else if ( artistCache[enid].about )  {
+	  var artist = artistCache[enid];
+	  setArtistPopup(artist);
+      }
+    });
+
+	function setArtistPopup(artist) {
+	  $('#artistPopupAbout').html(artist.about);
+	  $('#artistPopupContainer').css('display', 'block');
+	  withForeignId("facebook", artist.foreign_ids, function(id) {
+	      if (! id) return;
+	      $('<a/>', { text: 'facebook', target:'_facebook', href: 'https://www.facebook.com/' + id }).appendTo($('#artistLinks'));
+	  });
+
+
+	}
+
+  $('.box').on('mouseout', function() {
+      if (hideTimer)
+          clearTimeout(hideTimer);
+      hideTimer = setTimeout(function()
+      {
+	  $('#artistPopupContainer').css('display', 'none');
+      }, hideDelay);
+  });
+
+  // Allow mouse over of details without hiding details
+  $('#artistPopupContainer').mouseover(function() {
+      if (hideTimer)
+          clearTimeout(hideTimer);
+  });
+
+  // Hide after mouseout
+  $('#artistPopupContainer').mouseout(function() {
+      if (hideTimer)
+          clearTimeout(hideTimer);
+      hideTimer = setTimeout(function()
+      {
+          //container.css('display', 'none');
+      }, hideDelay);
+  });
+    
+
+
+	initFb('448816685209880', document);
+	initGame();
+	initGeoLocation();
+	drawCircle('.box', 50, 200, 90, 310, 220);
+	
+    });
+
+
+    /*
+'<iframe src="http://widgets.itunes.apple.com/widget.html?c=us&brc=ffffff&blc=FFFFFF&trc=FFFFFF&tlc=ffffff&d=Songs%20from%20your%20chair&t=Rota%20Music%20Mixer&m=song&e=song&w=250&h=300&ids=637489638,207399824&wt=playlist&partnerId=&affiliate_id=" frameborder=0 style="overflow-x:hidden;overflow-y:hidden;width:250px;height: 300px;border:0px"></iframe>'
+    */

@@ -1,0 +1,169 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  
+<head>
+
+  <title>Rota - Take a Chance</title>
+  <meta http-equiv="Pragma" content="no-cache" />
+
+  <!--Presentation-->
+<!--  <link rel="stylesheet" href="http://twitter.github.com/bootstrap/assets/css/bootstrap.css"> -->
+
+  <link rel="stylesheet" type="text/css" href="//fonts.googleapis.com/css?family=Quando"/>
+  <link rel="stylesheet" type="text/css" href="//code.jquery.com/ui/1.10.3/themes/smoothness/jquery-ui.css" />
+  <link rel="Stylesheet" type="text/css" href="css/style.css" />
+
+<!--  <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.0.7/angular.min.js"></script> -->
+
+
+  <!--Scripts-->
+  <script src="//ajax.googleapis.com/ajax/libs/jquery/2.0.0/jquery.min.js"></script> 
+  <script src="//ajax.googleapis.com/ajax/libs/jqueryui/1.10.3/jquery-ui.min.js"></script>
+
+  <script type="text/javascript" src="js/jquery.shapelib.js"></script>
+  <script type="text/javascript" src="js/application.js"></script>
+
+</head>
+
+
+
+
+
+<body>
+<div id="fb-root"></div>
+<script>
+/*
+  window.fbAsyncInit = function() {
+    // init the FB JS SDK
+    FB.init({
+      appId      : '448816685209880',                     // App ID from the app dashboard
+      channelUrl : '//mitercam.mit.edu:38080/stubhack/channel.html', // Channel file for x-domain comms
+      status     : true,                                  // Check Facebook Login status
+      xfbml      : true,                                  // Look for social plugins on the page
+      cookie     : true,                                  // enable cookies to allow server to access session
+      oauth      : true                                   // enable OAuth 2.0
+    });
+
+    // Additional initialization code such as adding Event Listeners goes here
+    FB.Event.subscribe('auth.authResponseChange', function(response) {
+
+      // Here we specify what we do with the response anytime this event occurs. 
+      if (response.status === 'connected') {
+        onFacebookConnect();
+      } else if (response.status === 'not_authorized') {
+        $(".fbuser").text("");
+        console.log('not_authorized');
+      } else {
+        $(".fbuser").text("");
+        console.log('response.status: ' + response.status);
+      }
+    });
+  };
+  
+  // facebook has different examples for asynchronous SDK loading
+  // 1) https://developers.facebook.com/docs/facebook-login/getting-started-web/
+(function(d){
+     var js, id = 'facebook-jssdk', ref = d.getElementsByTagName('script')[0];
+     if (d.getElementById(id)) {return;}
+     js = d.createElement('script'); js.id = id; js.async = true;
+     js.src = "http://connect.facebook.net/en_US/all.js";
+     ref.parentNode.insertBefore(js, ref);
+   }(document));
+
+
+// Here we run a very simple test of the Graph API after login is successful. 
+  // This testAPI() function is only called in those cases. 
+  function onFacebookConnect() {
+    FB.api('/me', function(response) {
+      $(".fbuser").text(response.name);
+    });
+  }
+*/
+</script>
+
+
+
+<div class='header'>
+  <div class='title'><span class='rota'>Rota</span>Travel Guide</div>
+
+  <div class='fblogin'>
+    <div class='fbuser'></div>
+    <fb:login-button  autologoutlink="true" show-faces="false" width="200" max-rows="1" scope="user_location,user_likes"></fb:login-button>
+  </div>
+
+</div>
+
+<div class="container">
+
+  <div id='about'>
+    <div class='modal'>
+      <span class='rota'>Rota</span> is a novel way to discover new music. 
+      Starting with bands you love, <span class='rota'>Rota</span> sets out to explore the universe
+      of artists, guiding you through the familiar to the unexplored 
+      reaches of your own taste. Start with a random selection or
+      login with Facebook to match your favorites.
+    </div>
+    <div class='play'>Play</div>
+  </div>
+
+
+  <div id='rotary'
+      <div class="box"></div>
+      <div class="box"></div>
+      <div class="box"></div>
+      <div class="box"></div>
+      <div class="box"></div>
+      <div class="box"></div>
+
+      <div class="shuffle", id="shuffle"></div>
+
+    </div>
+  </div>
+
+  <div class='upcoming'>
+    <div class='artist'></div>
+    <div class='events-scroller'>
+      <ul class='events'></ul>
+    </div>
+  </div>
+  <div class='selected'></div>
+
+<!--
+<div class='itunes'>
+<iframe src="http://widgets.itunes.apple.com/widget.html?c=us&brc=ffffff&blc=FFFFFF&trc=FFFFFF&tlc=ffffff&d=Songs%20from%20your%20chair&t=Rota%20Music%20Mixer&m=song&e=song&w=250&h=300&ids=637489638,207399824&wt=playlist&partnerId=&affiliate_id=" frameborder=0 style="overflow-x:hidden;overflow-y:hidden;width:250px;height: 300px;border:0px"></iframe> 
+</div>
+-->
+
+
+  <div class='power'>
+    <a href=' http://the.echonest.com/'><img src="images/EN_P_on_Light_Transparent.png"/></a>
+  </div>
+
+
+  <div id="artistPopupContainer">
+      <table width="" border="0" cellspacing="0" cellpadding="0" align="center" class="artistPopupPopup">
+      <tr>
+         <td class="corner topLeft"></td>
+         <td class="top"></td>
+         <td class="corner topRight"></td>
+      </tr>
+      <tr>
+         <td class="left">&nbsp;</td>
+         <td>
+	   <div id="artistPopupContent">
+	     <div id="artistPopupAbout"></div>
+	     <div id="artistLinks"></div>
+	   </div></td>
+         <td class="right">&nbsp;</td>
+      </tr>
+      <tr>
+         <td class="corner bottomLeft">&nbsp;</td>
+         <td class="bottom">&nbsp;</td>
+         <td class="corner bottomRight"></td>
+      </tr>
+      </table>
+  </div>
+</body>
+
+</html>

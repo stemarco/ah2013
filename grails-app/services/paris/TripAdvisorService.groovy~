@@ -1,0 +1,8 @@
+package paris
+
+class TripAdvisorService {
+
+    def serviceMethod() {
+
+    }
+}

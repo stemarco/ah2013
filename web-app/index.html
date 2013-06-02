@@ -1,0 +1,119 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  
+<head>
+
+  <title>Rota - Take a Chance</title>
+  <meta http-equiv="Pragma" content="no-cache" />
+
+  <!--Presentation-->
+<!--  <link rel="stylesheet" href="http://twitter.github.com/bootstrap/assets/css/bootstrap.css"> -->
+
+  <link rel="stylesheet" type="text/css" href="//fonts.googleapis.com/css?family=Quando"/>
+  <link rel="stylesheet" type="text/css" href="//code.jquery.com/ui/1.10.3/themes/smoothness/jquery-ui.css" />
+  <link rel="Stylesheet" type="text/css" href="css/style.css" />
+
+<!--  <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.0.7/angular.min.js"></script> -->
+
+
+  <!--Scripts-->
+  <script type="text/javascript" src="http://maps.google.com/maps/api/js?sensor=true"></script>
+  <script src="//ajax.googleapis.com/ajax/libs/jquery/2.0.0/jquery.min.js"></script> 
+  <script src="//ajax.googleapis.com/ajax/libs/jqueryui/1.10.3/jquery-ui.min.js"></script>
+
+  <script type="text/javascript" src="js/jquery.shapelib.js"></script>
+  <script type="text/javascript" src="js/application.js"></script>
+  <script type="text/javascript" src="js/map/ui/jquery.ui.map.js"></script>
+
+</head>
+
+
+
+
+
+<body>
+<div id="fb-root"></div>
+
+
+
+<div class='header'>
+  <div class='title'><span class='rota'>Rota</span> TravelGuide</div>
+
+  <div class='fblogin'>
+    <div class='fbuser'></div>
+    <fb:login-button  autologoutlink="true" show-faces="false" width="200" max-rows="1" scope="user_location,user_likes"></fb:login-button>
+  </div>
+
+</div>
+
+<div class="container">
+
+  <div id='about'>
+    <div class='modal'>
+    </div>
+    <div class='play'>Go Now</div>
+  </div>
+
+
+  <div id='rotary'
+      <div class="box"></div>
+      <div class="box"></div>
+      <div class="box"></div>
+      <div class="box"></div>
+      <div class="box"></div>
+      <div class="box"></div>
+      <div class="box"></div>
+      <div class="box"></div>
+
+      <div class="shuffle", id="shuffle"></div>
+
+    </div>
+  </div>
+
+  <div class='directions'>
+    <div class='place'></div>
+    <div class='directions-scroller'>
+    </div>
+  </div>
+  <div class='selected'></div>
+
+
+
+<div class='footer'>
+  <div class='power'>
+    <a href=' http://www.tripadvisor.com/'><img src="images/ta_branding.png"/></a>
+  </div>
+</div>
+
+
+  <div id="poiPopupContainer">
+      <table width="" border="0" cellspacing="0" cellpadding="0" align="center" class="poiPopupPopup">
+      <tr>
+         <td class="corner topLeft"></td>
+         <td class="top"></td>
+         <td class="corner topRight"></td>
+      </tr>
+      <tr>
+         <td class="left">&nbsp;</td>
+         <td>
+	   <div id="poiPopupContent">
+	     <div id="poiPopupAbout"></div>
+	     <div id="poiPopupMap"></div>
+	     <div id="poiPopupNearby"></div>
+	     <div id="poiLinks"></div>
+	   </div></td>
+         <td class="right">&nbsp;</td>
+      </tr>
+      <tr>
+         <td class="corner bottomLeft">&nbsp;</td>
+         <td class="bottom">&nbsp;</td>
+         <td class="corner bottomRight"></td>
+      </tr>
+      </table>
+  </div>
+
+
+</body>
+
+</html>
